@@ -20,7 +20,22 @@ class KittyFormater:
         pass
 
     def generate_dict(self, label_file):
+        label_data = np.array([])
+        with open(label_file, 'r') as f:
+            for line in f.readlines():
+                row_dict = {}
+                line = line.split()
+                row_dict['type'] = line[0]
+                row_dict['truncated'] = float(line[1])
+                row_dict['occluded'] = float(line[2])
+                row_dict['alpha'] = float(line[3])
+                row_dict['bbox'] = np.array([line[4], line[5], line[6], line[7]]).astype(np.float)
+                row_dict['dimensions'] = np.array([line[8], line[9], line[10]]).astype(np.float)
+                row_dict['location'] = np.array([line[11], line[12], line[13]]).astype(np.float)
+                row_dict['rotation_y'] = float(line[14])
+                label_data = np.append(label_data, row_dict)
 
+        return label_data
 
 
 class DatasetItem:
@@ -40,11 +55,8 @@ class DatasetItem:
 
     def get_label(self):
         if self.type == DatasetType.KITTI_IMG:
-            label_data = np.array([])
-            with open(self.label_file, 'r') as f:
-                for line in f.readlines():
-                    label_data = np.append(label_data, [line.split(' ')])
-            print(f"Label data: {label_data}")
+            kitti_formater = KittyFormater()
+            return kitti_formater.generate_dict(self.label_file)
 
 
 class Dataset:
@@ -74,7 +86,6 @@ class Dataset:
 
             # Find all possible classes in dataset
             label_files = self.train.targets
-            print(f"Label files: {label_files}")
             classes = np.array([])
             for label_file in label_files:
                 with open(label_file, 'r') as f:
@@ -82,7 +93,7 @@ class Dataset:
                         classes = np.append(classes, line.split()[0])
 
             for item in self.items:
-                item.get_label()
+                print(item.get_label())
 
             self.classes_dict = Counter(classes)
 
