@@ -1,0 +1,9 @@
+QLabel#ImageLabel:hover {
+    background-color: #011305
+}
+
+QLabel#ImageLabel {
+    border-color: red;
+    border-width: 10px;
+    border: 1px solid gray;
+}

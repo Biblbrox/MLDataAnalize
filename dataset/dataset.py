@@ -53,7 +53,7 @@ class DatasetItem:
         if self.type == DatasetType.KITTI_IMG:
             return cv.imread(self.target_file)
 
-    def get_label(self):
+    def get_label_data(self):
         if self.type == DatasetType.KITTI_IMG:
             kitti_formater = KittyFormater()
             return kitti_formater.generate_dict(self.label_file)
@@ -78,22 +78,16 @@ class Dataset:
             self.test = torchvision.datasets.Kitti(root_folder, train=False, download=False,
                                                    transform=transforms.ToTensor())
 
-            for obj_file, label_file in zip(self.train.targets, self.train.images):
-                self.items = np.append(self.items, [DatasetItem(self.type, obj_file, label_file)])
-
             # Filter not existing labels. Image exsits but not label
             self.train.targets = [target_file for target_file in self.train.targets if os.path.exists(target_file)]
 
-            # Find all possible classes in dataset
-            label_files = self.train.targets
-            classes = np.array([])
-            for label_file in label_files:
-                with open(label_file, 'r') as f:
-                    for line in f.readlines():
-                        classes = np.append(classes, line.split()[0])
+            for obj_file, label_file in zip(self.train.targets, self.train.images):
+                self.items = np.append(self.items, [DatasetItem(self.type, obj_file, label_file)])
 
+            classes = np.array([])
             for item in self.items:
-                print(item.get_label())
+                for obj in item.get_label_data():
+                    classes = np.append(classes, obj['type'])
 
             self.classes_dict = Counter(classes)
 
