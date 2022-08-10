@@ -1,10 +1,12 @@
 # This Python file uses the following encoding: utf-8
+import os.path
 import sys
 
 import PyQt6.QtWidgets
 from PyQt6.QtGui import QPixmap, QImage
 
 from dataset.dataset import DatasetType, Dataset
+from translate import tr
 from ui import ui
 
 from PyQt6.QtWidgets import QApplication, QMainWindow
@@ -24,6 +26,9 @@ class MainWindow(QMainWindow):
         logging.basicConfig(level=logging.DEBUG)
         self.dataset = Dataset(DatasetType.KITTI_IMG, '/home/biblbrox/autonet/test_kitti/')
         self.images, self.labels = self.dataset.get_labeled()
+        self.image_classes = []
+        for i in range(len(self.images)):
+            self.image_classes.append('ImageLabelLabeled' if i < len(self.labels) else 'ImageLabelUnlabeled')
 
         self.init_dataset_overview()
         self.init_diagram_cell()
@@ -33,6 +38,7 @@ class MainWindow(QMainWindow):
     def init_diagram_cell(self):
         classes = self.dataset.classes_dict
         diagram = ui.make_diagram(self, classes)
+        diagram.set_window_title(tr("Classes distribution"))
         self.gridLayout.addWidget(diagram, 0, 0)
 
     def init_info_cell(self):
@@ -52,7 +58,7 @@ class MainWindow(QMainWindow):
         self.gridLayout.addWidget(table, 1, 0)
 
     def init_dataset_overview(self):
-        image_gallery = ImageGallery(self.images, self)
+        image_gallery = ImageGallery(self.images, self.image_classes, self)
         self.scrollAreaWidgetContents.setLayout(image_gallery)
 
 

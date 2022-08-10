@@ -2,8 +2,14 @@ QLabel#ImageLabel:hover {
     background-color: #011305
 }
 
-QLabel#ImageLabel {
+QLabel#ImageLabelUnlabeled {
     border-color: red;
     border-width: 10px;
-    border: 1px solid gray;
+    border: 1px solid red;
+}
+
+QLabel#ImageLabelLabeled {
+    border-color: red;
+    border-width: 10px;
+    border: 1px solid green;
 }
