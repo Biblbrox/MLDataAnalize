@@ -3,25 +3,14 @@ import os.path
 
 import PyQt6.QtWidgets
 import PyQt6.QtCore
-from PyQt6.QtGui import QImage, QPixmap
-
-
-class Dialog(PyQt6.QtWidgets.QDialog):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-        self.image_lbl = PyQt6.QtWidgets.QLabel()
-        lay = PyQt6.QtWidgets.QVBoxLayout(self)
-        lay.addWidget(self.image_lbl)
-
-    def set_image(self, image: QImage):
-        pixmap = QPixmap.fromImage(image)
-        self.image_lbl.setPixmap(QPixmap(pixmap))
+from PyQt6 import QtGui, QtCore
+from PyQt6.QtGui import QImage, QPixmap, QHelpEvent
 
 
 class ImageLabel(PyQt6.QtWidgets.QLabel):
-    open_signal = PyQt6.QtCore.pyqtSignal
-    label_signal = PyQt6.QtCore.pyqtSignal
+    open_signal = PyQt6.QtCore.pyqtSignal(str)
+    label_signal = PyQt6.QtCore.pyqtSignal(str)
+    tip_signal = PyQt6.QtCore.pyqtSignal(str)
 
     def __init__(self, image_path, object_name, parent=None):
         PyQt6.QtWidgets.QWidget.__init__(self, parent)
@@ -53,13 +42,22 @@ class ImageLabel(PyQt6.QtWidgets.QLabel):
         self.setLayout(outer_vertical_layout)
 
         self.open_button.clicked.connect(self.onOpenButtonClicked)
+        self.label_button.clicked.connect(self.onLabelButtonClicked)
 
     def mouseDoubleClickEvent(self, event):
         if event.button == PyQt6.QtCore.Qt.MouseButton.LeftButton:
             image = self.pixmap().toImage()
 
+    def event(self, e: QtCore.QEvent) -> bool:
+        if e.type() == QtCore.QEvent.Type.ToolTip:
+            self.tip_signal.emit(self.image_path)
+            #PyQt6.QtWidgets.QToolTip.showText(e.globalPos(), "asdjajdgajsgd")
+            return True
+
+        return super(ImageLabel, self).event(e)
+
     def onOpenButtonClicked(self):
-        logging.debug(f"Open button clicked on photo: {self.image_path}")
-        dialog = Dialog(self)
-        dialog.set_image(QImage(self.image_path))
-        dialog.show()
+        self.open_signal.emit(self.image_path)
+
+    def onLabelButtonClicked(self):
+        self.label_signal.emit(self.image_path)

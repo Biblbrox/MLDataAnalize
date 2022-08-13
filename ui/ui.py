@@ -1,4 +1,8 @@
+import os.path
+
 import matplotlib
+
+from dataset.dataset import DatasetType, DatasetItem
 
 matplotlib.use('Qt5Agg')
 
@@ -21,3 +25,13 @@ def make_diagram(parent, values: dict):
                 shadow=True, startangle=90)
 
     return sc
+
+
+class Formatter:
+    def __init__(self, dataset_item: DatasetItem):
+        self.dataset_item = dataset_item
+
+
+class KittiImgFormatter(Formatter):
+    def __format__(self, format_spec):
+        return format(str(self), format_spec)

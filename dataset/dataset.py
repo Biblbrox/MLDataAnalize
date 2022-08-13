@@ -91,6 +91,14 @@ class Dataset:
 
             self.classes_dict = Counter(classes)
 
+    def get_objects_gen(self):
+        def generator():
+            for item in self.items:
+                item_data = item.get_label_data()
+                yield item_data
+
+        return generator()
+
     '''
     Return labeled items. For example [img, label_file].
     Specific format may depend from the dataset type.

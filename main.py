@@ -10,7 +10,7 @@ from translate import tr
 from ui import ui
 
 from PyQt6.QtWidgets import QApplication, QMainWindow
-from PyQt6 import uic
+from PyQt6 import uic, QtCore
 
 import logging
 
@@ -33,7 +33,7 @@ class MainWindow(QMainWindow):
         self.init_dataset_overview()
         self.init_diagram_cell()
         self.init_info_cell()
-        self.init_table_cell()
+        #self.init_table_cell()
 
     def init_diagram_cell(self):
         classes = self.dataset.classes_dict
@@ -44,8 +44,14 @@ class MainWindow(QMainWindow):
     def init_info_cell(self):
         dataset_info = PyQt6.QtWidgets.QLabel(self)
         classes = self.dataset.classes_dict
-        dataset_info.setText(
-            f"Classes count: {len(classes.keys())}\n Images count: {len(self.images)}\n Labeled: {len(self.labels)}")
+        images_info = f"Images count: {len(self.images)}"
+        labels_info = f"Labels count: {len(self.labels)}"
+        obj_count = 0
+        for obj in self.dataset.get_objects_gen():
+            obj_count += len(obj)
+        objects_info = f"Total number of objects (instances): {obj_count}"
+        dataset_info.setText(f"{images_info}\n{labels_info}\n{objects_info}")
+        dataset_info.setAlignment(QtCore.Qt.AlignmentFlag.AlignLeft and QtCore.Qt.AlignmentFlag.AlignTop)
         self.gridLayout.addWidget(dataset_info, 0, 1)
 
     def init_table_cell(self):
@@ -63,6 +69,13 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        # filename='HISTORYlistener.log',
+        level=logging.DEBUG,
+        format='%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S',
+    )
+
     app = QApplication([])
     with open("./styles/styles.qss") as styles:
         app.setStyleSheet("".join(styles.readlines()))
