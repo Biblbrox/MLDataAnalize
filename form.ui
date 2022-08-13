@@ -50,7 +50,7 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>756</width>
+               <width>647</width>
                <height>482</height>
               </rect>
              </property>
@@ -78,13 +78,30 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="action"/>
+    <addaction name="actionCreateDataset"/>
     <addaction name="actionOpen_dataset"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="action">
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>LeftToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionCreateDataset"/>
+   <addaction name="separator"/>
+   <addaction name="actionOpen_dataset"/>
+   <addaction name="separator"/>
+   <addaction name="actionactionSelectDatasetType"/>
+   <addaction name="separator"/>
+  </widget>
+  <action name="actionCreateDataset">
    <property name="text">
     <string>Create dataset</string>
    </property>
@@ -92,6 +109,11 @@
   <action name="actionOpen_dataset">
    <property name="text">
     <string>Open dataset</string>
+   </property>
+  </action>
+  <action name="actionactionSelectDatasetType">
+   <property name="text">
+    <string>Dataset type</string>
    </property>
   </action>
  </widget>

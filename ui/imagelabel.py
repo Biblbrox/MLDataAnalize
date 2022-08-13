@@ -10,7 +10,7 @@ from PyQt6.QtGui import QImage, QPixmap, QHelpEvent
 class ImageLabel(PyQt6.QtWidgets.QLabel):
     open_signal = PyQt6.QtCore.pyqtSignal(str)
     label_signal = PyQt6.QtCore.pyqtSignal(str)
-    tip_signal = PyQt6.QtCore.pyqtSignal(str)
+    tip_signal = PyQt6.QtCore.pyqtSignal(PyQt6.QtCore.QPoint, str)
 
     def __init__(self, image_path, object_name, parent=None):
         PyQt6.QtWidgets.QWidget.__init__(self, parent)
@@ -50,8 +50,8 @@ class ImageLabel(PyQt6.QtWidgets.QLabel):
 
     def event(self, e: QtCore.QEvent) -> bool:
         if e.type() == QtCore.QEvent.Type.ToolTip:
-            self.tip_signal.emit(self.image_path)
-            #PyQt6.QtWidgets.QToolTip.showText(e.globalPos(), "asdjajdgajsgd")
+            self.tip_signal.emit(e.globalPos(), self.image_path)
+
             return True
 
         return super(ImageLabel, self).event(e)

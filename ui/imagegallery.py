@@ -1,6 +1,8 @@
 import logging
 import os.path
 
+import PyQt6
+from PyQt6 import QtCore
 from PyQt6.QtGui import QImage
 from PyQt6.QtWidgets import QGridLayout, QWidget
 
@@ -9,6 +11,8 @@ from ui.imagelabel import ImageLabel
 
 
 class ImageGallery(QGridLayout):
+
+    tip_signal = PyQt6.QtCore.pyqtSignal(PyQt6.QtCore.QPoint, str)
 
     def on_open_action(self, image_path):
         logging.debug("On open action")
@@ -19,7 +23,8 @@ class ImageGallery(QGridLayout):
     def on_label_action(self, image_path):
         logging.debug("On label action")
 
-    def on_tip_action(self, image_path):
+    def on_tip_action(self, pos: PyQt6.QtCore.QPoint, image_path):
+        self.tip_signal.emit(pos, image_path)
         logging.debug("On tip action")
 
     def __init__(self, images_files, el_classes, parent=None):
