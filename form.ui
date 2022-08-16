@@ -98,7 +98,6 @@
    <addaction name="separator"/>
    <addaction name="actionOpen_dataset"/>
    <addaction name="separator"/>
-   <addaction name="actionactionSelectDatasetType"/>
    <addaction name="separator"/>
   </widget>
   <action name="actionCreateDataset">
@@ -110,8 +109,14 @@
    <property name="text">
     <string>Open dataset</string>
    </property>
+   <property name="iconVisibleInMenu">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionactionSelectDatasetType">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Dataset type</string>
    </property>

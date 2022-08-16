@@ -1,8 +1,13 @@
 import os.path
+import sys
+import traceback
+from types import TracebackType
 
 import matplotlib
+from PyQt5.QtWidgets import QWidget, QDialog, QMessageBox
 
 from dataset.dataset import DatasetType, DatasetItem
+from translate import tr
 
 matplotlib.use('Qt5Agg')
 
@@ -25,6 +30,18 @@ def make_diagram(parent, values: dict):
                 shadow=True, startangle=90)
 
     return sc
+
+
+def show_failure_message(parent: QWidget, message: str, tback: TracebackType = None):
+    msg = QMessageBox()
+    msg.setIcon(QMessageBox.Information)
+    msg.setText(tr("Error message: "))
+    msg.setInformativeText(message)
+    msg.setWindowTitle(tr("Failure message"))
+    msg.setDetailedText(str(traceback.format_tb(tback)))
+    msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+    # msg.buttonClicked.connect(msgbtn)
+    return msg.exec_()
 
 
 class Formatter:

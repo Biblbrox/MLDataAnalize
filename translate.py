@@ -1,5 +1,7 @@
-from PyQt6 import QtCore
+from PyQt5 import QtCore
+from PyQt5.QtCore import QObject
 
 
 def tr(message: str):
-    return QtCore.QObject.tr(message)
+    obj = QObject()
+    return QtCore.QObject.tr(obj, message)

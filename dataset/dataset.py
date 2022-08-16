@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from enum import Enum
 import os
 import torchvision.datasets
@@ -8,11 +9,34 @@ import cv2 as cv
 
 from torchvision.transforms import transforms
 
+DatasetTypesNames = {'Kitti Images only': 'Kitti Images only', 'YOLO': 'YOLO', 'Kitti': 'Kitti'}
+
 
 class DatasetType(Enum):
     YOLO = 0
     KITTI_IMG = 1
     KITTI = 2
+
+
+class DatasetValidator(ABC):
+    @abstractmethod
+    def validate(self) -> bool:
+        ...
+
+
+class KittiValidator(DatasetValidator):
+    def validate(self) -> bool:
+        return True
+
+
+class KittiImgValidator(DatasetValidator):
+    def validate(self) -> bool:
+        return True
+
+
+class YoloValidator(DatasetValidator):
+    def validate(self) -> bool:
+        return True
 
 
 class KittyFormater:

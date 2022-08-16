@@ -1,19 +1,19 @@
 import logging
 import os.path
 
-import PyQt6.QtWidgets
-import PyQt6.QtCore
-from PyQt6 import QtGui, QtCore
-from PyQt6.QtGui import QImage, QPixmap, QHelpEvent
+import PyQt5.QtWidgets
+import PyQt5.QtCore
+from PyQt5 import QtGui, QtCore
+from PyQt5.QtGui import QImage, QPixmap, QHelpEvent
 
 
-class ImageLabel(PyQt6.QtWidgets.QLabel):
-    open_signal = PyQt6.QtCore.pyqtSignal(str)
-    label_signal = PyQt6.QtCore.pyqtSignal(str)
-    tip_signal = PyQt6.QtCore.pyqtSignal(PyQt6.QtCore.QPoint, str)
+class ImageLabel(PyQt5.QtWidgets.QLabel):
+    open_signal = PyQt5.QtCore.pyqtSignal(str)
+    label_signal = PyQt5.QtCore.pyqtSignal(str)
+    tip_signal = PyQt5.QtCore.pyqtSignal(PyQt5.QtCore.QPoint, str)
 
     def __init__(self, image_path, object_name, parent=None):
-        PyQt6.QtWidgets.QWidget.__init__(self, parent)
+        PyQt5.QtWidgets.QWidget.__init__(self, parent)
         assert (os.path.exists(image_path))
 
         self.image_path = image_path
@@ -22,15 +22,15 @@ class ImageLabel(PyQt6.QtWidgets.QLabel):
         self.setObjectName(object_name)
         self.setPixmap(QPixmap().fromImage(scaled))
 
-        outer_vertical_layout = PyQt6.QtWidgets.QVBoxLayout(self)
-        outer_vertical_layout.addWidget(PyQt6.QtWidgets.QLabel(os.path.basename(self.image_path)))
+        outer_vertical_layout = PyQt5.QtWidgets.QVBoxLayout(self)
+        outer_vertical_layout.addWidget(PyQt5.QtWidgets.QLabel(os.path.basename(self.image_path)))
 
-        buttons_layout = PyQt6.QtWidgets.QVBoxLayout(self)
-        hor_layout = PyQt6.QtWidgets.QHBoxLayout(self)
+        buttons_layout = PyQt5.QtWidgets.QVBoxLayout(self)
+        hor_layout = PyQt5.QtWidgets.QHBoxLayout(self)
         hor_layout.addSpacing(100)
-        vert_laoyut = PyQt6.QtWidgets.QVBoxLayout()
-        self.open_button = PyQt6.QtWidgets.QPushButton("Open")
-        self.label_button = PyQt6.QtWidgets.QPushButton("Label")
+        vert_laoyut = PyQt5.QtWidgets.QVBoxLayout()
+        self.open_button = PyQt5.QtWidgets.QPushButton("Open")
+        self.label_button = PyQt5.QtWidgets.QPushButton("Label")
         self.open_button.setFixedSize(40, 40)
         self.label_button.setFixedSize(40, 40)
 
@@ -43,10 +43,6 @@ class ImageLabel(PyQt6.QtWidgets.QLabel):
 
         self.open_button.clicked.connect(self.onOpenButtonClicked)
         self.label_button.clicked.connect(self.onLabelButtonClicked)
-
-    def mouseDoubleClickEvent(self, event):
-        if event.button == PyQt6.QtCore.Qt.MouseButton.LeftButton:
-            image = self.pixmap().toImage()
 
     def event(self, e: QtCore.QEvent) -> bool:
         if e.type() == QtCore.QEvent.Type.ToolTip:
