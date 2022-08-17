@@ -32,15 +32,14 @@ def make_diagram(parent, values: dict):
     return sc
 
 
-def show_failure_message(parent: QWidget, message: str, tback: TracebackType = None):
+def show_failure_message(message: str, tback: TracebackType = None):
     msg = QMessageBox()
-    msg.setIcon(QMessageBox.Information)
+    msg.setIcon(QMessageBox.Critical)
     msg.setText(tr("Error message: "))
     msg.setInformativeText(message)
     msg.setWindowTitle(tr("Failure message"))
     msg.setDetailedText(str(traceback.format_tb(tback)))
     msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-    # msg.buttonClicked.connect(msgbtn)
     return msg.exec_()
 
 

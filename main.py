@@ -2,8 +2,6 @@
 import os.path
 import sys
 
-import importlib
-
 import PyQt5.QtWidgets
 from PyQt5.QtCore import QObject, QEvent
 from PyQt5.QtGui import QPixmap, QImage, QFont
@@ -26,17 +24,19 @@ class MainWindow(QMainWindow):
         self.ui = uic.loadUi('form.ui', self)
         logging.basicConfig(level=logging.DEBUG)
 
+        # Init ui elements
         self.dataset_selection_combo = PyQt5.QtWidgets.QComboBox(self)
+        self.init_toolbar()
 
+        self.dataset = None
         self.dataset_type = DatasetType.KITTI_IMG
         logging.debug(f"Current dataset type: {self.dataset_type}")
 
-        self.dataset = None
-
-        self.init_toolbar()
+        # Init signals
         self.actionOpen_dataset.triggered.connect(self.on_action_open_dataset)
         self.dataset_selection_combo.currentTextChanged.connect(self.on_dataset_type_changed)
 
+        # Init datast info
         self.init_dataset_overview()
         self.init_diagram_cell()
         self.init_info_cell()
@@ -49,14 +49,14 @@ class MainWindow(QMainWindow):
 
     def on_action_open_dataset(self):
         dataset_path = PyQt5.QtWidgets.QFileDialog.getExistingDirectory(self, tr("Select dataset root folder"))
+
+        if not dataset_path:
+            return
+
         if self.dataset_type == DatasetType.KITTI_IMG:
             self.dataset = Dataset(DatasetType.KITTI_IMG, dataset_path)
             self.images, self.labels = self.dataset.get_labeled()
-            self.image_classes = []
-            for i in range(len(self.images)):
-                self.image_classes.append('ImageLabelLabeled' if i < len(self.labels) else 'ImageLabelUnlabeled')
             self.update_info()
-        # dataset_type =
 
     def update_info(self):
         logging.debug("Updating dataset info")
@@ -105,7 +105,10 @@ class MainWindow(QMainWindow):
         if self.dataset is None:
             return
 
-        image_gallery = ImageGallery(self.images, self.image_classes, self)
+        image_classes = []
+        for i in range(len(self.images)):
+            image_classes.append('ImageLabelLabeled' if i < len(self.labels) else 'ImageLabelUnlabeled')
+        image_gallery = ImageGallery(self.images, image_classes, self)
         image_gallery.tip_signal.connect(self.on_dataset_overview_tip)
         self.scrollAreaWidgetContents.setLayout(image_gallery)
 
@@ -136,23 +139,12 @@ class MainWindow(QMainWindow):
         self.toolBar.addWidget(placeholder_widget)
 
 
-class Application(QApplication):
-    def notify(self, obj: QObject, event: QEvent):
-        exc_occurred = False
-        try:
-            return QApplication.notify(self, obj, event)
-        except Exception as err:
-            exc_occurred = True
-            return False
-        finally:
-            if exc_occurred:
-                self.quit()
 
 
 def my_excepthook(type, err_msg: str, tback):
     # log the exception here
     logging.error(f"Unhandled exception occurred: {err_msg}")
-    ui.show_failure_message(None, f"Unhandled exception: {err_msg}", tback)
+    ui.show_failure_message(f"Unhandled exception: {err_msg}", tback)
     # then call the default handler
     sys.__excepthook__(type, err_msg, tback)
 
@@ -167,7 +159,7 @@ if __name__ == "__main__":
         datefmt='%Y-%m-%d %H:%M:%S',
     )
 
-    app = Application([])
+    app = QApplication([])
     with open("./styles/styles.qss") as styles:
         app.setStyleSheet("".join(styles.readlines()))
     widget = MainWindow()
